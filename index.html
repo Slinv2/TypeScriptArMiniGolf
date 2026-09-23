@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>AR Minigolf</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Webcam-Feed (nur im Webcam-Modus sichtbar) -->
+    <video id="camera" playsinline autoplay muted></video>
+
+    <!-- Three.js rendert hierhin -->
+    <canvas id="scene"></canvas>
+
+    <!-- HUD-Overlay -->
+    <div id="hud">
+      <div id="hud-status">Willkommen zu AR Minigolf</div>
+      <div id="hud-strokes">Schl&auml;ge: 0</div>
+      <div id="power-meter"><div id="power-fill"></div></div>
+    </div>
+
+    <!-- Modus-Auswahl beim Start -->
+    <div id="mode-select">
+      <h1>&#9971; AR Minigolf</h1>
+      <p>W&auml;hle einen Modus:</p>
+      <button id="btn-xr">Immersive AR (Brille / Headset)</button>
+      <button id="btn-webcam">Webcam AR (Handy / Laptop)</button>
+      <p class="hint" id="xr-hint"></p>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

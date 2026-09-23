@@ -1,0 +1,21 @@
+{
+  "name": "ar-minigolf",
+  "version": "0.1.0",
+  "description": "WebXR AR minigolf with hand tracking (MediaPipe Hands + native WebXR hand input)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.14",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.169.0",
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  }
+}
