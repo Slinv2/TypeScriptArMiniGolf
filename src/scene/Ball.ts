@@ -18,13 +18,28 @@ export class Ball {
   private airborneY = 0;
   private sunk = false;
   private sinkTimer = 0;
+  private readonly shadow: THREE.Mesh;
 
   constructor(private readonly course: Course) {
     this.mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(this.radius, 24, 24),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0.05 })
+      new THREE.SphereGeometry(this.radius, 32, 32),
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.25,
+        metalness: 0.1,
+        emissive: 0x222222,
+        emissiveIntensity: 0.15
+      })
     );
     this.mesh.castShadow = true;
+
+    // Weicher Kontaktschatten unter dem Ball
+    this.shadow = new THREE.Mesh(
+      new THREE.CircleGeometry(this.radius * 1.3, 24),
+      new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 })
+    );
+    this.shadow.rotation.x = -Math.PI / 2;
+    course.group.add(this.shadow);
     course.group.add(this.mesh);
     this.resetToTee();
   }
@@ -37,6 +52,7 @@ export class Ball {
     this.sunk = false;
     this.sinkTimer = 0;
     this.mesh.visible = true;
+    this.shadow.visible = true;
     this.mesh.scale.setScalar(1);
     this.syncMesh();
   }
@@ -163,6 +179,7 @@ export class Ball {
     this.position.z = THREE.MathUtils.lerp(this.position.z, this.course.holeLocalPosition.z, t);
     this.position.y = this.radius - t * (this.radius + 0.05);
     this.mesh.scale.setScalar(1 - t * 0.4);
+    this.shadow.visible = false;
     this.syncMesh();
     if (t >= 1) {
       this.mesh.visible = false;
@@ -173,5 +190,12 @@ export class Ball {
 
   private syncMesh(): void {
     this.mesh.position.copy(this.position);
+    // Schatten am Boden unter dem Ball, verblasst wenn der Ball abhebt
+    this.shadow.position.set(this.position.x, 0.006, this.position.z);
+    const lift = Math.max(0, this.position.y - this.radius);
+    const shadowMat = this.shadow.material as THREE.MeshBasicMaterial;
+    shadowMat.opacity = Math.max(0, 0.28 - lift * 1.5);
+    const scale = 1 + lift * 4;
+    this.shadow.scale.set(scale, scale, scale);
   }
 }

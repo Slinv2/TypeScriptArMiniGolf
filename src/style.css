@@ -51,46 +51,72 @@ body {
 
 #hud-status {
   position: absolute;
-  top: 16px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 18px;
-  background: rgba(0, 0, 0, 0.5);
+  padding: 11px 22px;
+  background: rgba(12, 16, 24, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
   font-size: 16px;
   font-weight: 600;
+  letter-spacing: 0.2px;
   text-align: center;
   max-width: 90vw;
+  animation: pop-in 0.35s ease;
 }
 
 #hud-strokes {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  padding: 8px 14px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 12px;
+  top: 18px;
+  right: 18px;
+  padding: 9px 16px;
+  background: rgba(12, 16, 24, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 #power-meter {
   position: absolute;
-  bottom: 24px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(60vw, 260px);
-  height: 12px;
-  background: rgba(255, 255, 255, 0.2);
+  width: min(60vw, 280px);
+  height: 14px;
+  padding: 2px;
+  background: rgba(12, 16, 24, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   overflow: hidden;
 }
 
 #power-fill {
   height: 100%;
   width: 0%;
+  border-radius: 999px;
   background: linear-gradient(90deg, #3ddc84, #ffd23f, #ff5252);
+  box-shadow: 0 0 12px rgba(255, 210, 63, 0.6);
   transition: width 0.05s linear;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* Modus-Auswahl */
@@ -102,36 +128,83 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 16px;
   text-align: center;
-  background: radial-gradient(circle at 50% 30%, #1c2333, #0a0d14);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(61, 220, 132, 0.15), transparent 55%),
+    radial-gradient(circle at 50% 35%, #1c2333, #070a11 80%);
   padding: 24px;
+  overflow: hidden;
+}
+
+/* dezent schwebende Kreise im Hintergrund */
+#mode-select::before,
+#mode-select::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+#mode-select::before {
+  width: 320px;
+  height: 320px;
+  background: #2a6df4;
+  top: -80px;
+  left: -60px;
+  animation: float 9s ease-in-out infinite;
+}
+
+#mode-select::after {
+  width: 280px;
+  height: 280px;
+  background: #3ddc84;
+  bottom: -80px;
+  right: -60px;
+  animation: float 11s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(24px); }
 }
 
 #mode-select h1 {
-  font-size: clamp(28px, 6vw, 44px);
+  font-size: clamp(30px, 7vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(90deg, #3ddc84, #ffd23f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
 }
 
 #mode-select p {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 #mode-select button {
   pointer-events: auto;
-  min-width: 280px;
-  padding: 16px 22px;
+  min-width: 300px;
+  padding: 17px 24px;
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
-  background: #2a6df4;
-  border: none;
-  border-radius: 14px;
+  background: linear-gradient(135deg, #2a6df4, #4b8bff);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
   cursor: pointer;
-  transition: transform 0.08s ease, background 0.15s ease;
+  box-shadow: 0 10px 30px rgba(42, 109, 244, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 #mode-select button:hover {
-  background: #3b7cff;
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 38px rgba(42, 109, 244, 0.45);
 }
 
 #mode-select button:active {
@@ -139,15 +212,20 @@ body {
 }
 
 #mode-select button:disabled {
-  background: #3a3f4b;
-  color: #8a8f9a;
+  background: #2a2f3b;
+  color: #7d828d;
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
   cursor: not-allowed;
+  filter: none;
+  transform: none;
 }
 
 .hint {
   font-size: 13px;
   opacity: 0.6;
-  max-width: 320px;
+  max-width: 340px;
+  line-height: 1.5;
 }
 
 /* ARButton von three.js einheitlich positionieren */

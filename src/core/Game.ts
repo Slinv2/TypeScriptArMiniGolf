@@ -54,9 +54,13 @@ export class Game {
   constructor() {
     const canvas = document.getElementById('scene') as HTMLCanvasElement;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.05;
     this.renderer.setClearColor(0x000000, 0);
 
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 50);
@@ -76,13 +80,28 @@ export class Game {
   }
 
   private setupLights(): void {
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x444455, 1.0);
+    const hemi = new THREE.HemisphereLight(0xcfeaff, 0x3a5030, 0.9);
     this.scene.add(hemi);
-    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
-    dir.position.set(1, 3, 2);
-    dir.castShadow = true;
-    dir.shadow.mapSize.set(1024, 1024);
-    this.scene.add(dir);
+
+    // Warmes Hauptlicht mit weichem Schatten
+    const key = new THREE.DirectionalLight(0xfff2d8, 1.4);
+    key.position.set(1.2, 3, 1.5);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.camera.near = 0.1;
+    key.shadow.camera.far = 12;
+    key.shadow.camera.left = -1.5;
+    key.shadow.camera.right = 1.5;
+    key.shadow.camera.top = 1.5;
+    key.shadow.camera.bottom = -1.5;
+    key.shadow.bias = -0.0005;
+    key.shadow.radius = 4;
+    this.scene.add(key);
+
+    // Kühles Fülllicht von der anderen Seite
+    const fill = new THREE.DirectionalLight(0xbcd4ff, 0.4);
+    fill.position.set(-1.5, 1.8, -1);
+    this.scene.add(fill);
   }
 
   // ---------- Modus-Start ----------
@@ -137,8 +156,17 @@ export class Game {
     this.hud.setStatus('Handmodell wird geladen\u2026');
     await mpTracker.init();
 
-    // Course automatisch ~0.7 m vor der Kamera platzieren
-    this.placeCourseInFront(0.7);
+    // Im Webcam-Modus bewegt sich die Kamera nicht (kein Head-Tracking).
+    // Kamera etwas erhöhen und auf den Boden-Parcours blicken lassen,
+    // damit Ziel, Fahne und Hindernisse im Bild liegen.
+    this.camera.position.set(0, 1.3, 0);
+    this.camera.quaternion.identity();
+
+    // Course automatisch vor der Kamera platzieren und Kamera darauf ausrichten
+    this.placeCourseInFront(1.0);
+    this.camera.lookAt(this.course.group.position.x, 0.1, this.course.group.position.z);
+    this.camera.updateMatrixWorld();
+
     this.hud.setStatus('Hole aus und schlage den Ball ins Loch! \u26f3');
 
     this.clock.start();
