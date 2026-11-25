@@ -80,7 +80,7 @@ export class ArjsMarkerAnchor implements AnchorProvider {
     if (import.meta.env.DEV) (window as unknown as { __anchor: unknown }).__anchor = this;
 
     const ctrl = context.arController;
-    if (!ctrl) throw new Error('ARController nicht initialisiert');
+    if (!ctrl) throw new Error('ARController not initialized');
     // Automatische Schwelle → robuster bei wechselndem Licht
     const otsu = ctrl.artoolkit?.AR_LABELING_THRESH_MODE_AUTO_OTSU;
     if (typeof otsu === 'number') ctrl.setThresholdMode(otsu);

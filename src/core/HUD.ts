@@ -1,9 +1,9 @@
 import { MARKERS, type MarkerId } from '../config';
 
 const PANE_HTML = `
-  <div class="hud-status" data-role="status">Willkommen zu AR Minigolf</div>
+  <div class="hud-status" data-role="status">Welcome to AR Mini Golf</div>
   <div class="hud-stats" data-role="stats"></div>
-  <div class="hud-strokes" data-role="strokes">Schl&auml;ge: 0</div>
+  <div class="hud-strokes" data-role="strokes">Strokes: 0</div>
   <div class="hud-markers" data-role="markers"></div>
   <div class="hud-debug" data-role="debug"></div>
   <div class="power-meter"><div class="power-fill" data-role="power"></div></div>
@@ -75,7 +75,7 @@ export class HUD {
 
   setStrokes(count: number): void {
     this.strokeCount = count;
-    this.setHtml('strokes', `Schl&auml;ge: ${count}`);
+    this.setHtml('strokes', `Strokes: ${count}`);
   }
 
   /** Kopfzeile wie im Konzept-Sketch (setStrokes vorher aufrufen): „PAR 2 · DISTANZ 3.5 m · SCORE +1“. */
@@ -88,8 +88,8 @@ export class HUD {
     const sc = score === null ? '–' : score === 0 ? 'E' : score > 0 ? `+${score}` : `${score}`;
     this.setHtml(
       'stats',
-      `<span>PAR <b>${par}</b></span><span>DISTANZ <b>${dist}</b></span>` +
-        `<span class="stereo-only">SCHL&Auml;GE <b>${this.strokeCount}</b></span><span>SCORE <b>${sc}</b></span>`
+      `<span>PAR <b>${par}</b></span><span>DISTANCE <b>${dist}</b></span>` +
+        `<span class="stereo-only">STROKES <b>${this.strokeCount}</b></span><span>SCORE <b>${sc}</b></span>`
     );
   }
 

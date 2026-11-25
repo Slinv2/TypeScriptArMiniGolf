@@ -29,7 +29,7 @@ export class CameraFrameSource {
     this.canvas.width = width;
     this.canvas.height = height;
     const ctx = this.canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) throw new Error('2D-Canvas nicht verfügbar');
+    if (!ctx) throw new Error('2D canvas not available');
     this.ctx = ctx;
   }
 
@@ -57,7 +57,7 @@ export class CameraFrameSource {
         lastError = e;
       }
     }
-    if (!this.stream) throw lastError ?? new Error('Keine Kamera');
+    if (!this.stream) throw lastError ?? new Error('No camera');
 
     const track = this.stream.getVideoTracks()[0];
     const s = track?.getSettings?.() ?? {};

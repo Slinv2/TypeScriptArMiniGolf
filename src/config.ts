@@ -22,11 +22,11 @@ export interface MarkerDef {
  */
 export const MARKERS: MarkerDef[] = [
   { id: 'A', role: 'tee', label: 'Start' },
-  { id: 'B', role: 'hole', label: 'Ziel' },
-  { id: 'C', role: 'obstacle', label: 'Wand', obstacle: { kind: 'wall', length: 0.32, thickness: 0.05, color: 0x4cc9f0 } },
+  { id: 'B', role: 'hole', label: 'Goal' },
+  { id: 'C', role: 'obstacle', label: 'Wall', obstacle: { kind: 'wall', length: 0.32, thickness: 0.05, color: 0x4cc9f0 } },
   { id: 'D', role: 'obstacle', label: 'Bumper', obstacle: { kind: 'bumper', length: 0.075, thickness: 0, color: 0x9b5de5 } },
-  { id: 'E', role: 'obstacle', label: 'Wand lang', obstacle: { kind: 'wall', length: 0.5, thickness: 0.05, color: 0xf72585 } },
-  { id: 'F', role: 'obstacle', label: 'Drehbalken', obstacle: { kind: 'spinner', length: 0.36, thickness: 0.035, color: 0xffd23f } }
+  { id: 'E', role: 'obstacle', label: 'Long wall', obstacle: { kind: 'wall', length: 0.5, thickness: 0.05, color: 0xf72585 } },
+  { id: 'F', role: 'obstacle', label: 'Windmill', obstacle: { kind: 'spinner', length: 0.36, thickness: 0.035, color: 0xffd23f } }
 ];
 
 /** Referenzgröße: bei dieser Markergröße entspricht 1 Spiel-Meter 1 echtem Meter. */

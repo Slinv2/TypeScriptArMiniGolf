@@ -147,7 +147,7 @@ export class Game {
   async startImmersive(): Promise<void> {
     this.mode = 'xr';
     this.hud.show();
-    this.setGameStatus('Bewege dein Gerät und tippe, um den Parcours zu platzieren.');
+    this.setGameStatus('Move your device and tap to place the course.');
 
     this.renderer.xr.enabled = true;
     const arButton = ARButton.createButton(this.renderer, {
@@ -172,7 +172,7 @@ export class Game {
   async startWebcam(): Promise<void> {
     this.mode = 'webcam';
     this.hud.show();
-    this.setGameStatus('Kamera wird gestartet…');
+    this.setGameStatus('Starting camera…');
 
     const video = document.getElementById('camera') as HTMLVideoElement;
     video.classList.add('backdrop');
@@ -193,7 +193,7 @@ export class Game {
       mirrorX: true,
       handPoint: 'wrist'
     });
-    this.setGameStatus('Handmodell wird geladen…');
+    this.setGameStatus('Loading hand model…');
     try {
       await mpTracker.init();
       this.tracker = mpTracker;
@@ -202,7 +202,7 @@ export class Game {
       const pointer = new PointerHandTracker(this.renderer.domElement, this.camera, () => this.groundPlaneWorld, () => false);
       await pointer.init();
       this.tracker = pointer;
-      this.handTrackingError = 'Handtracking nicht verfügbar (MediaPipe braucht Internet) – Maus/Finger ist jetzt der Putter.';
+      this.handTrackingError = 'Hand tracking unavailable (MediaPipe needs internet) – mouse/finger is now the putter.';
       this.handTrackingErrorUntil = performance.now() + 8000;
     }
 
@@ -213,7 +213,7 @@ export class Game {
     this.camera.lookAt(this.course.group.position.x, 0.1, this.course.group.position.z);
     this.camera.updateMatrixWorld();
 
-    this.setGameStatus('Hole aus und schlage den Ball ins Loch! ⛳');
+    this.setGameStatus('Swing and putt the ball into the hole! ⛳');
     this.clock.start();
     this.renderer.setAnimationLoop(() => this.loop(null));
   }
@@ -226,7 +226,7 @@ export class Game {
     this.mode = 'marker';
     this.hud.show();
     document.body.classList.add('marker-mode');
-    this.setGameStatus('Kamera wird gestartet…');
+    this.setGameStatus('Starting camera…');
 
     const video = document.getElementById('camera') as HTMLVideoElement;
     video.classList.add('source-only');
@@ -234,12 +234,12 @@ export class Game {
     try {
       await source.start();
     } catch (e) {
-      this.setGameStatus(`Kamera nicht verfügbar: ${(e as Error)?.message ?? e}`);
+      this.setGameStatus(`Camera not available: ${(e as Error)?.message ?? e}`);
       return;
     }
     this.frameSource = source;
 
-    this.setGameStatus('Marker-Tracking wird geladen…');
+    this.setGameStatus('Loading marker tracking…');
     this.course.useMarkerLayout();
     this.course.group.matrixAutoUpdate = false;
     const anchor = new ArjsMarkerAnchor(source);
@@ -247,7 +247,7 @@ export class Game {
       await anchor.init();
     } catch (e) {
       console.error(e);
-      this.setGameStatus('AR.js konnte nicht geladen werden (siehe Konsole).');
+      this.setGameStatus('AR.js could not be loaded (see console).');
       return;
     }
     this.anchor = anchor;
@@ -285,13 +285,13 @@ export class Game {
         })
         .catch((e) => {
           console.error(e);
-          this.handTrackingError = 'Handtracking nicht verf\u00fcgbar (MediaPipe braucht Internet) \u2013 Maus/Finger ist jetzt der Putter.';
+          this.handTrackingError = 'Hand tracking unavailable (MediaPipe needs internet) \u2013 mouse/finger is now the putter.';
           this.handTrackingErrorUntil = performance.now() + 8000;
           usePointer();
         });
     }
 
-    this.setGameStatus('Zeige Marker A (Start) und B (Ziel) gleichzeitig.');
+    this.setGameStatus('Show marker A (start) and B (goal) at the same time.');
     this.clock.start();
     this.renderer.setAnimationLoop(() => this.loop(null));
   }
@@ -376,7 +376,7 @@ export class Game {
     this.strokes = 0;
     this.hud.setStrokes(0);
     this.updatePar();
-    this.setGameStatus('Halte die Hand über den Ball und hole aus! ⛳');
+    this.setGameStatus('Hold your hand over the ball and swing! ⛳');
   }
 
   private updatePar(): void {
@@ -432,15 +432,15 @@ export class Game {
       const b = state.visible.B;
       this.setGameStatus(
         a && b
-          ? 'Start und Ziel liegen zu nah beieinander (mind. 30 cm).'
+          ? 'Start and goal are too close together (min. 30 cm).'
           : a
-            ? 'Marker A erkannt – jetzt auch Marker B (Ziel) ins Bild!'
+            ? 'Marker A found – now bring marker B (goal) into view!'
             : b
-              ? 'Marker B erkannt – jetzt auch Marker A (Start) ins Bild!'
-              : 'Zeige Marker A (Start) und B (Ziel) gleichzeitig.'
+              ? 'Marker B found – now bring marker A (start) into view!'
+              : 'Show marker A (start) and B (goal) at the same time.'
       );
     }
-    return state.ready && state.staleSeconds > STALE_WARNING_S ? 'Kein Marker im Bild – schau auf die Bahn.' : null;
+    return state.ready && state.staleSeconds > STALE_WARNING_S ? 'No marker in view – look at the course.' : null;
   }
 
   // ---------- Haupt-Loop ----------
@@ -483,7 +483,7 @@ export class Game {
       }
       if (this.phase === 'rolling' && !this.ball.isMoving && !this.ball.isSunk) {
         this.phase = 'ready';
-        this.setGameStatus('Bereit für den nächsten Schlag.');
+        this.setGameStatus('Ready for the next stroke.');
       }
       if (finished && this.restartTimer === null) {
         this.restartTimer = window.setTimeout(() => this.restartHole(), RESTART_DELAY_MS);
@@ -501,9 +501,9 @@ export class Game {
     const diff = this.strokes - this.par;
     this.totalScore += diff;
     this.holesPlayed += 1;
-    const names: Record<string, string> = { '-3': 'Albatros', '-2': 'Eagle', '-1': 'Birdie', '0': 'Par', '1': 'Bogey', '2': 'Doppel-Bogey' };
+    const names: Record<string, string> = { '-3': 'Albatros', '-2': 'Eagle', '-1': 'Birdie', '0': 'Par', '1': 'Bogey', '2': 'Double Bogey' };
     const label = this.strokes === 1 ? 'Hole-in-One!' : names[String(diff)] ?? (diff > 0 ? `+${diff}` : `${diff}`);
-    this.setGameStatus(`Eingelocht mit ${this.strokes} ${this.strokes === 1 ? 'Schlag' : 'Schlägen'} – ${label} 🎉`);
+    this.setGameStatus(`Holed in ${this.strokes} ${this.strokes === 1 ? 'stroke' : 'strokes'} – ${label} 🎉`);
   }
 
   private restartHole(): void {
@@ -517,7 +517,7 @@ export class Game {
     this.phase = 'ready';
     this.swing.reset();
     this.updatePar();
-    this.setGameStatus('Neue Runde – hole aus und schlage ein! ⛳');
+    this.setGameStatus('New round – take your swing! ⛳');
   }
 
   private handleHand(hand: HandFrame): void {
@@ -556,8 +556,8 @@ export class Game {
       this.hasPrevPutter = true;
     }
 
-    if (distXZ < READY_RADIUS && this.gameStatus.startsWith('Halte')) {
-      this.setGameStatus('Jetzt schwingen! \ud83c\udfcc\ufe0f');
+    if (distXZ < READY_RADIUS && this.gameStatus.startsWith('Hold')) {
+      this.setGameStatus('Swing now! \ud83c\udfcc\ufe0f');
     }
 
     if (distXZ < HIT_RADIUS && handSpeed > MIN_SWING) {
@@ -583,7 +583,7 @@ export class Game {
     this.strokes += 1;
     this.hud.setStrokes(this.strokes);
     this.phase = 'rolling';
-    this.setGameStatus('Der Ball rollt…');
+    this.setGameStatus('The ball is rolling…');
     this.swing.reset();
   }
 
@@ -625,11 +625,11 @@ export class Game {
   }
 
   private updateDebug(): void {
-    const parts = [`${this.fps.toFixed(0)} fps`, `Kamera ${this.detectRate.toFixed(0)} Hz`];
+    const parts = [`${this.fps.toFixed(0)} fps`, `Camera ${this.detectRate.toFixed(0)} Hz`];
     if (this.mode === 'marker') {
-      parts.push(`Marker ${settings.markerSizeCm} cm`, `Bahn ${(this.course.length * worldScale()).toFixed(2)} m`);
+      parts.push(`Marker ${settings.markerSizeCm} cm`, `Course ${(this.course.length * worldScale()).toFixed(2)} m`);
     }
-    parts.push(this.tracker ? 'Hand: bereit' : 'Hand: lädt');
+    parts.push(this.tracker ? 'Hand: ready' : 'Hand: loading');
     this.hud.setDebug(parts.join(' · '));
   }
 

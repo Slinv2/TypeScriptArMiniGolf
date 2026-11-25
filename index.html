@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#070a11" />
-    <title>AR Minigolf</title>
+    <title>AR Mini Golf</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
@@ -24,79 +24,79 @@
 
     <!-- Werkzeugleiste im Marker-Modus -->
     <div id="toolbar">
-      <button id="btn-cardboard" title="Cardboard-Splitscreen">&#128083; Cardboard</button>
-      <button id="btn-restart" title="Runde neu starten">&#8635; Neu</button>
+      <button id="btn-cardboard" title="Cardboard split screen">&#128083; Cardboard</button>
+      <button id="btn-restart" title="Restart round">&#8635; Restart</button>
     </div>
-    <button id="btn-exit-cardboard" title="Cardboard beenden">&#10005;</button>
+    <button id="btn-exit-cardboard" title="Exit Cardboard">&#10005;</button>
 
     <!-- Modus-Auswahl beim Start -->
     <div id="mode-select">
-      <h1>&#9971; AR Minigolf</h1>
-      <p>W&auml;hle einen Modus:</p>
+      <h1>&#9971; AR Mini Golf</h1>
+      <p>Choose a mode:</p>
       <button id="btn-marker-cardboard" class="primary">
         &#128083; Marker AR &ndash; Cardboard
-        <small>Handy in der Cardboard-Brille, Splitscreen</small>
+        <small>Phone in a Cardboard viewer, split screen</small>
       </button>
       <button id="btn-marker">
         &#127919; Marker AR
-        <small>PC / Handy, gedruckte Marker A&ndash;F</small>
+        <small>PC / phone, printed markers A&ndash;F</small>
       </button>
       <button id="btn-webcam">
         &#128247; Webcam AR
-        <small>ohne Marker, Parcours vor der Kamera</small>
+        <small>no markers, course in front of the camera</small>
       </button>
       <button id="btn-xr">
         &#129405; Immersive AR
-        <small>WebXR-Headset (z.&nbsp;B. Meta Quest)</small>
+        <small>WebXR headset (e.g. Meta Quest)</small>
       </button>
       <p class="hint" id="xr-hint"></p>
       <div class="links">
-        <a href="markers/AR-Minigolf_Marker_A4_16cm.pdf" target="_blank" rel="noopener">&#128424; Marker drucken (A4, 16&nbsp;cm)</a>
-        <a href="markers/AR-Minigolf_Marker_Tisch_8cm.pdf" target="_blank" rel="noopener">&#128424; Tisch-Marker (8&nbsp;cm)</a>
-        <button id="btn-settings" class="link">&#9881; Einstellungen</button>
+        <a href="markers/AR-MiniGolf_Markers_A4_16cm.pdf" target="_blank" rel="noopener">&#128424; Print markers (A4, 16&nbsp;cm)</a>
+        <a href="markers/AR-MiniGolf_Markers_Table_7cm.pdf" target="_blank" rel="noopener">&#128424; Table markers (7&nbsp;cm)</a>
+        <button id="btn-settings" class="link">&#9881; Settings</button>
       </div>
     </div>
 
-    <!-- Einstellungen -->
+    <!-- Settings -->
     <div id="settings-panel" hidden>
       <div class="sheet">
-        <h2>Einstellungen</h2>
-        <label>Markergr&ouml;&szlig;e (schwarzer Rahmen au&szlig;en)
+        <h2>Settings</h2>
+        <label>Marker size (outer edge of black frame)
           <span class="row"><input type="number" id="set-marker" min="3" max="40" step="0.1" /> cm</span>
         </label>
-        <label>Putter-Punkt der Hand
+        <label>Hand point used as putter
           <select id="set-hand">
-            <option value="index">Zeigefingerspitze</option>
-            <option value="palm">Handmitte</option>
-            <option value="wrist">Handgelenk</option>
+            <option value="index">Index fingertip</option>
+            <option value="palm">Palm center</option>
+            <option value="wrist">Wrist</option>
           </select>
         </label>
-        <label>Schlagkraft <output id="out-power"></output>
+        <label>Swing power <output id="out-power"></output>
           <input type="range" id="set-power" min="0.4" max="2.5" step="0.05" />
         </label>
-        <label>Kamerabild spiegeln
+        <label>Mirror camera image
           <select id="set-mirror">
-            <option value="auto">automatisch (Frontkamera/Laptop)</option>
-            <option value="on">immer</option>
-            <option value="off">nie</option>
+            <option value="auto">automatic (front camera / laptop)</option>
+            <option value="on">always</option>
+            <option value="off">never</option>
           </select>
         </label>
         <fieldset>
           <legend>Cardboard</legend>
-          <label>Linsenverzerrung <output id="out-distortion"></output>
+          <label>Lens distortion <output id="out-distortion"></output>
             <input type="range" id="set-distortion" min="0" max="0.6" step="0.01" />
           </label>
-          <label>Bildabstand zur Mitte <output id="out-offset"></output>
+          <label>Image offset towards center <output id="out-offset"></output>
             <input type="range" id="set-offset" min="-0.25" max="0.25" step="0.01" />
           </label>
           <label>Zoom <output id="out-zoom"></output>
             <input type="range" id="set-zoom" min="1" max="1.8" step="0.05" />
           </label>
         </fieldset>
-        <label class="check"><input type="checkbox" id="set-debug" /> Debug-Anzeige (FPS, Erkennung)</label>
+        <label class="check"><input type="checkbox" id="set-debug" /> Debug overlay (FPS, detection)</label>
         <div class="actions">
-          <button id="settings-reset" class="link">Zur&uuml;cksetzen</button>
-          <button id="settings-close">Fertig</button>
+          <button id="settings-reset" class="link">Reset</button>
+          <button id="settings-close">Done</button>
         </div>
       </div>
     </div>

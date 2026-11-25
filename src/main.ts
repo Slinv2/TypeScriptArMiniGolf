@@ -105,11 +105,11 @@ async function boot(): Promise<void> {
   const xrSupported = await detectXrSupport();
   if (!xrSupported) {
     btnXr.disabled = true;
-    xrHint.textContent = 'Immersive AR ist auf diesem Gerät nicht verfügbar – nutze Marker AR oder Webcam AR.';
+    xrHint.textContent = 'Immersive AR is not available on this device – use Marker AR or Webcam AR.';
   }
   if (!navigator.mediaDevices?.getUserMedia) {
     for (const b of [btnWebcam, btnMarker, btnMarkerCardboard]) b.disabled = true;
-    xrHint.textContent = 'Kein Kamerazugriff: Seite über HTTPS (oder localhost) öffnen.';
+    xrHint.textContent = 'No camera access: open the page via HTTPS (or localhost).';
   }
 
   btnXr.addEventListener('click', async () => {
