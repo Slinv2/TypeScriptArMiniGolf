@@ -10,7 +10,15 @@ export default defineConfig({
     https: true,
     port: 5173
   },
+  // AR.js gemeinsam mit three vorbündeln, damit nur EINE three.js-Instanz existiert
+  optimizeDeps: {
+    include: ['three', '@ar-js-org/ar.js/three.js/build/ar-threex.mjs', '@mediapipe/tasks-vision']
+  },
+  resolve: {
+    dedupe: ['three']
+  },
   build: {
-    target: 'es2020'
+    target: 'es2020',
+    chunkSizeWarningLimit: 2000
   }
 });

@@ -81,15 +81,22 @@ export class Ball {
       return this.animateSink(dt);
     }
 
-    // Horizontale Bewegung
-    this.position.x += this.velocity.x * dt;
-    this.position.z += this.velocity.z * dt;
+    // Substeps gegen "Tunneln" durch dünne Wände bei hoher Geschwindigkeit
+    const speed0 = Math.hypot(this.velocity.x, this.velocity.z);
+    const steps = Math.min(24, Math.max(1, Math.ceil((speed0 * dt) / (this.radius * 0.8))));
+    const h = dt / steps;
+    for (let i = 0; i < steps; i++) {
+      this.position.x += this.velocity.x * h;
+      this.position.z += this.velocity.z * h;
+      this.handleBounds();
+      this.handleObstacles();
+      if (this.checkHole()) return false; // Einsink-Animation startet im nächsten Frame
+    }
 
     // Rollreibung
     const horizontalSpeed = Math.hypot(this.velocity.x, this.velocity.z);
     if (horizontalSpeed > 0) {
-      const decel = ROLL_FRICTION * dt;
-      const newSpeed = Math.max(0, horizontalSpeed - decel);
+      const newSpeed = Math.max(0, horizontalSpeed - ROLL_FRICTION * dt);
       const factor = newSpeed / horizontalSpeed;
       this.velocity.x *= factor;
       this.velocity.z *= factor;
@@ -106,53 +113,32 @@ export class Ball {
     }
     this.position.y = this.radius + this.airborneY;
 
-    this.handleBounds();
-    this.handleObstacles();
-
-    if (this.checkHole()) {
-      return false; // Einsink-Animation startet im nächsten Frame
-    }
-
     this.syncMesh();
     return false;
   }
 
   private handleBounds(): void {
-    const c = this.course;
-    const limitX = c.halfWidth - this.radius;
-    const limitZ = c.halfDepth - this.radius;
-    if (this.position.x > limitX) {
-      this.position.x = limitX;
-      this.velocity.x = -this.velocity.x * RESTITUTION;
-    } else if (this.position.x < -limitX) {
-      this.position.x = -limitX;
-      this.velocity.x = -this.velocity.x * RESTITUTION;
+    const b = this.course.bounds;
+    const r = this.radius;
+    if (this.position.x > b.maxX - r) {
+      this.position.x = b.maxX - r;
+      this.velocity.x = -Math.abs(this.velocity.x) * RESTITUTION;
+    } else if (this.position.x < b.minX + r) {
+      this.position.x = b.minX + r;
+      this.velocity.x = Math.abs(this.velocity.x) * RESTITUTION;
     }
-    if (this.position.z > limitZ) {
-      this.position.z = limitZ;
-      this.velocity.z = -this.velocity.z * RESTITUTION;
-    } else if (this.position.z < -limitZ) {
-      this.position.z = -limitZ;
-      this.velocity.z = -this.velocity.z * RESTITUTION;
+    if (this.position.z > b.maxZ - r) {
+      this.position.z = b.maxZ - r;
+      this.velocity.z = -Math.abs(this.velocity.z) * RESTITUTION;
+    } else if (this.position.z < b.minZ + r) {
+      this.position.z = b.minZ + r;
+      this.velocity.z = Math.abs(this.velocity.z) * RESTITUTION;
     }
   }
 
   private handleObstacles(): void {
     for (const o of this.course.obstacles) {
-      const dx = this.position.x - o.center.x;
-      const dz = this.position.z - o.center.z;
-      const overlapX = o.halfX + this.radius - Math.abs(dx);
-      const overlapZ = o.halfZ + this.radius - Math.abs(dz);
-      if (overlapX > 0 && overlapZ > 0) {
-        // Auf der Achse mit geringster Durchdringung herausschieben
-        if (overlapX < overlapZ) {
-          this.position.x += Math.sign(dx || 1) * overlapX;
-          this.velocity.x = -this.velocity.x * RESTITUTION;
-        } else {
-          this.position.z += Math.sign(dz || 1) * overlapZ;
-          this.velocity.z = -this.velocity.z * RESTITUTION;
-        }
-      }
+      o.collide(this.position, this.velocity, this.radius);
     }
   }
 

@@ -12,11 +12,17 @@ interface Sample {
 export class SwingDetector {
   private readonly samples: Sample[] = [];
   private readonly windowMs = 120;
+  private readonly maxGapMs = 250;
 
   addSample(worldPosition: THREE.Vector3, timeMs: number): void {
     this.samples.push({ position: worldPosition.clone(), time: timeMs });
     const cutoff = timeMs - this.windowMs;
-    while (this.samples.length > 1 && this.samples[0].time < cutoff) {
+    // Ein Sample vor dem Fensterbeginn behalten, damit auch bei niedriger
+    // Bildrate (< 1 / Fenster) immer eine Geschwindigkeit berechnet werden kann.
+    while (this.samples.length > 2 && this.samples[1].time <= cutoff) {
+      this.samples.shift();
+    }
+    while (this.samples.length > 1 && this.samples[0].time < timeMs - this.maxGapMs) {
       this.samples.shift();
     }
   }

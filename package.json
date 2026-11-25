@@ -9,6 +9,7 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
+    "@ar-js-org/ar.js": "^3.4.8",
     "@mediapipe/tasks-vision": "^0.10.14",
     "three": "^0.169.0"
   },
